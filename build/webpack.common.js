@@ -1,12 +1,11 @@
-const path = require('path')
-const publicPath = path.resolve(__dirname, '../')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const { pathResolve, publicPath } = require('./utils')
+const readEnv = require('./utils/readEnv')
 
-function pathResolve(url) {
-  return path.resolve(publicPath, url || '')
-}
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = {
   context: publicPath,
@@ -30,10 +29,29 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(publicPath, 'src/static'),
+          from: pathResolve('src/static'),
           to: './static'
         }
       ]
-    })
-  ]
+    }),
+    // define global variable
+    new webpack.DefinePlugin(readEnv('.env'))
+  ],
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new CssMinimizerPlugin()
+    ]
+  },
+  resolve: {
+    extensions: ['.wasm', '.mjs', '.js', '.json', '.css']
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader', 'postcss-loader']
+      }
+    ]
+  }
 }
