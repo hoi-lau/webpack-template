@@ -1,4 +1,7 @@
-#app {
+/* #app {
   color: pink;
   display: flex;
+} */
+#app {
+  background-color: aqua;
 }

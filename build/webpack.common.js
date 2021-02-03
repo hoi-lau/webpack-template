@@ -1,20 +1,23 @@
 const { pathResolve, publicPath } = require('./utils')
 const readEnv = require('./utils/readEnv')
+const webpack = require('webpack')
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-const webpack = require('webpack')
+
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
   context: publicPath,
   entry: {
-    main: pathResolve('src/index.js')
+    app: pathResolve('src/index.js')
   },
+  target: 'web',
   output: {
     path: pathResolve('dist'),
     hashDigestLength: 8,
+    filename: '[name].[contenthash].js',
     publicPath: '/'
   },
   plugins: [
@@ -35,14 +38,12 @@ module.exports = {
       ]
     }),
     // define global variable
-    new webpack.DefinePlugin(readEnv('.env'))
+    new webpack.DefinePlugin(readEnv('.env')),
+    new VueLoaderPlugin({
+      verbose: true
+    })
   ],
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new CssMinimizerPlugin()
-    ]
-  },
+
   resolve: {
     extensions: ['.wasm', '.mjs', '.js', '.json', '.css']
   },
@@ -51,6 +52,38 @@ module.exports = {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader', 'postcss-loader']
+      },
+      {
+        test: /\.(styl|stylus)$/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader'
+          },
+          {
+            loader: 'stylus-loader'
+          }
+        ]
+      },
+      {
+        test: /\.js$/,
+        use: {
+          loader: 'babel-loader'
+        },
+        exclude: /(node_modules|bower_components)/,
+        include: /(src|static)/
+      },
+      {
+        test: /\.vue$/i,
+        use: {
+          loader: 'vue-loader',
+          options: {
+            preserveWhitespace: false,
+            optimizeSSR: false
+          }
+        }
       }
     ]
   }

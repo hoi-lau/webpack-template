@@ -1,6 +1,9 @@
 import './style/index.css'
+import './style/index.styl'
+import App from './app'
 
-const app = document.getElementById('app')
-const node = document.createElement('div')
-node.textContent = BASE_URL
-app.appendChild(node)
+App.render()
+
+if (module.hot) {
+  module.hot.accept()
+}
