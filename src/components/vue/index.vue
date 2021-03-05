@@ -8,6 +8,11 @@ export default {
     return {
       msg: 'hello world!!!!'
     }
+  },
+  methods: {
+    init() {
+      const a = 'hello'
+    }
   }
 }
 </script>
