@@ -98,7 +98,6 @@ module.exports = {
       {
         test: /\.vue$/,
         use: [
-          'cache-loader',
           {
             loader: 'vue-loader',
             options: {
@@ -237,7 +236,6 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           'thread-loader',
-          'cache-loader',
           {
             loader: 'babel-loader',
             options: {
